@@ -1,0 +1,70 @@
+-- Create the database and use it
+CREATE DATABASE hms;
+USE hms;
+
+-- Table for login credentials (Note: Consider using encryption for passwords)
+CREATE TABLE login (
+    username VARCHAR(25) NOT NULL,
+    password VARCHAR(255) NOT NULL -- Lengthened for storing encrypted passwords
+);
+
+-- Insert initial login data
+INSERT INTO login VALUES ('fontanebleau', '123456789');
+
+-- Table for employee information
+CREATE TABLE employees (
+    id INT AUTO_INCREMENT PRIMARY KEY,  -- Adding a unique identifier for employees
+    name VARCHAR(100) NOT NULL,
+    age INT CHECK(age >= 18),            -- Adding age constraint (assuming minimum 18)
+    gender ENUM('Male', 'Female') NOT NULL,
+    job VARCHAR(50) NOT NULL,
+    salary DECIMAL(10, 2) CHECK(salary >= 0), -- Salary cannot be negative
+    phone VARCHAR(15) NOT NULL,
+    nid VARCHAR(20) NOT NULL UNIQUE,     -- NID should be unique
+    email VARCHAR(100) UNIQUE            -- Email should also be unique
+);
+
+-- Table for drivers information
+CREATE TABLE drivers (
+    id INT AUTO_INCREMENT PRIMARY KEY,   -- Adding a unique identifier for drivers
+    name VARCHAR(100) NOT NULL,
+    age INT CHECK(age >= 18),            -- Age constraint for legal driving age
+    gender ENUM('Male', 'Female') NOT NULL,
+    car_name VARCHAR(100) NOT NULL,
+    car_number VARCHAR(20) NOT NULL UNIQUE, -- Car number should be unique
+    available ENUM('Yes', 'No') NOT NULL,
+    location VARCHAR(255) NOT NULL
+);
+
+-- Table for admin login (Consider using encryption for admin passwords)
+CREATE TABLE admin_login (
+    user_name VARCHAR(20) NOT NULL,
+    password VARCHAR(255) NOT NULL -- Lengthened for storing encrypted passwords
+);
+
+-- Insert initial admin login data
+INSERT INTO admin_login VALUES ('admin', 'admin');
+
+-- Table for room information
+CREATE TABLE room (
+    room_number VARCHAR(10) PRIMARY KEY,  -- Room number should be unique
+    availability ENUM('Available', 'Occupied') NOT NULL, -- Changed to ENUM for clarity
+    price DECIMAL(10, 2) CHECK(price >= 0), -- Price should be a decimal and non-negative
+    cleaning_status ENUM('Clean', 'Dirty') NOT NULL, -- Changed to ENUM for clarity
+    bed_type ENUM('Single', 'Double', 'Triple') NOT NULL -- Enum for bed types (more options)
+);
+
+-- Table for customer information
+CREATE TABLE customer (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    id_type ENUM('Passport', 'Driver License', 'National ID') NOT NULL, -- More specific ID types
+    id_number VARCHAR(100) NOT NULL,
+    contact_number VARCHAR(15) NOT NULL,
+    gender ENUM('Male', 'Female') NOT NULL,
+    country VARCHAR(100) NOT NULL,
+    room_number VARCHAR(10),
+    deposit DECIMAL(10, 2) CHECK(deposit >= 0), -- Deposit should be non-negative
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (room_number) REFERENCES room(room_number) ON DELETE SET NULL -- Ensure integrity with rooms
+);
